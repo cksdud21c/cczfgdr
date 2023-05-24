@@ -239,14 +239,14 @@ class RegistButton extends StatelessWidget {
 // 이거 써주면 됨.
 
 // 텍스트 값을 Flask 서버에 보내는 함수(보내지는거 확인완료.근데 애뮬레이터에서 한글이 안쳐짐. 이건 해결해야함.)
-Future<String> sendRegisterInfoToServer(String id, String pw, String sex, String age) async {
+Future<void> sendRegisterInfoToServer(String id, String pw, String sex, String age) async {
   var url = Uri.parse('http://34.66.37.198/signin');
   var data = {'ID': id, 'Password':pw, 'Sex':sex, 'Age':age};
   var body = json.encode(data);
   var response = await http.post(url, headers: {"Content-Type": "application/json"},
       body: body);
   if(response.statusCode == 200) {
-    return response.body;
+    return ;
   }else{
     throw Exception('Failed to send Register Information to server');
   }

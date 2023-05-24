@@ -38,7 +38,9 @@ class _TabCalenderState extends State<TabCalender> {
     // Request the selected date to the server
     // String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDay);
     // var url = Uri.parse('http://34.66.37.198/getData');
-    // var response = await http.post(url, body: {'date': formattedDate, 'ID' : id});
+    // var data = {'ID': id, 'date': formattedDate};
+    // var body = json.encode(data);
+    // var response = await http.post(url,headers: {"Content-Type": "application/json"},body: body,);
     // 저 if문에는 if(response.statusCode == 200) 이거 들어가야함.
     var a = 1;
     if (a == 1) {

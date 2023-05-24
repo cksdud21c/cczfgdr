@@ -97,7 +97,7 @@ class _ClothingGridState extends State<ClothingGrid> {
       },
     );
   }
-  Future<String> sendDeleteImageToServer(String url) async {
+  Future<void> sendDeleteImageToServer(String url) async {
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
@@ -107,7 +107,7 @@ class _ClothingGridState extends State<ClothingGrid> {
     var response = await http.post(url, headers: {"Content-Type": "application/json"},
         body: body);
     if(response.statusCode == 200) {
-      return response.body;
+      return ;
     }else{
       throw Exception('Failed to send hope emotion value to server');
     }

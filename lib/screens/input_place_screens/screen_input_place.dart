@@ -155,7 +155,7 @@ class Next_Button extends StatelessWidget {
 }
 
 
-// 텍스트 값을 Flask 서버에 보내는 함수(보내지는거 확인완료.근데 애뮬레이터에서 한글이 안쳐짐. 이건 해결해야함.)
+// // 텍스트 값을 Flask 서버에 보내는 함수(보내지는거 확인완료.근데 애뮬레이터에서 한글이 안쳐짐. 이건 해결해야함.)
 // Future<List<List<String>>> sendPlaceNameValueToServer(String id, String pn, String d, String c) async {
 //   var url = Uri.parse('http://34.66.37.198/spacename');
 //   var data = {'ID' : id, 'place': pn, 'district': d, 'Category': c};

@@ -150,14 +150,14 @@ class RegisterButton extends StatelessWidget {
 }//회원가입버튼 위젯
 
 
-Future<String> sendLoginInfoToServer(String id) async {
+Future<void> sendLoginInfoToServer(String id) async {
   var url = Uri.parse('http://34.66.37.198/login');
   var data = {'ID': id};
   var body = json.encode(data);
   var response = await http.post(url, headers: {"Content-Type": "application/json"},
       body: body);
   if(response.statusCode == 200) {
-    return response.body;
+    return ;
   }else{
     throw Exception('Failed to send Login Information to server');
   }

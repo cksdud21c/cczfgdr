@@ -166,7 +166,7 @@ class Next_Button extends StatelessWidget {
   }
 
 }
-
+//<Map<String, dynamic>> :  반환형은 Map이며, key는 String 타입, value는 아무 타입이나 올 수 있다.
 Future <Map<String, dynamic>> sendHopeEmotionToServer(String he, String id) async {
   var url = Uri.parse('http://34.66.37.198/emotext');
   var data = {'text': he, 'ID': id};
