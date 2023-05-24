@@ -115,13 +115,14 @@ class _CameraExampleState extends State<CameraExample> {
               TextButton(
                 child: Text('Cancel'),
                 onPressed: () {
+                  await sendCancelSignToServer(id!,imageUrl);
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
                 child: Text('OK'),
                 onPressed: () async {
-                  String OKsign = await sendOkSignToServer(id!,selectedCategory);
+                  String OKsign = await sendOkSignToServer(id!,selectedCategory, imageUrl);
                   if (OKsign == "OK") {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed('/closet');
@@ -276,9 +277,9 @@ class _CameraExampleState extends State<CameraExample> {
 }
 
 // function to send image to Flask server
-Future<String> sendOkSignToServer(String id, String category) async {
+Future<String> sendOkSignToServer(String id, String category, String url) async {
   var url = Uri.parse('http://34.66.37.198:5000/ok');
-  var data = {'ID': id, 'category': category};
+  var data = {'ID': id, 'category': category, 'url': url};
   var body = json.encode(data);
   var response = await http.post(
     url,
@@ -289,5 +290,20 @@ Future<String> sendOkSignToServer(String id, String category) async {
     return "OK";
   } else {
     return "Fail";
+  }
+}
+Future<void> sendCancelSignToServer(String id,String url) async {
+  var url = Uri.parse('http://34.66.37.198:5000/???');
+  var data = {'ID': id, 'url': url};
+  var body = json.encode(data);
+  var response = await http.post(
+    url,
+    headers: {"Content-Type": "application/json"},
+    body: body,
+  );
+  if (response.statusCode == 200) {
+    return ;
+  } else {
+    throw Exception("Fail to send Cancel sign to server");
   }
 }
