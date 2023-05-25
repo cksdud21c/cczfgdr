@@ -43,7 +43,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {//BuildContext: 위젯트리에서 현재 위젯(MYApp)의 위치
+  Widget build(BuildContext context) {//BuildContext: 위젯 트리에서 현재 위젯(MYApp)의 위치
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FirebaseAuthProvider()),
@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
           '/closet' : (context) => const Closet_Page(title : '옷장'),
           '/calender' : (context) => TabCalender(),
           '/profile' : (context) => TabProfile(),
-          '/input_place' : (context) => const InputPlacePage(title : '장소 입력'),
+          '/input_place' : (context) => InputPlacePage(title : '장소 입력'),
           '/camera' : (context) => const CameraExample(),
           '/home' : (context) =>Home(),
           '/info' : (context) => InfoScreen(),

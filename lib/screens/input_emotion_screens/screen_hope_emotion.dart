@@ -103,50 +103,21 @@ class Next_Button extends StatelessWidget {
     );
   }
 
-  // Future<void> fetchRecommendations(String emotion, String id, PlaceClothesRecommendModel placeClothesRecommendModel) async {
-  //   try {
-  //     final response = await sendHopeEmotionToServer(emotion, id);
-  //     final List<Map<String, dynamic>> recommendationSets = [];
-  //
-  //     for (var i = 0; i < 3; i++) {
-  //       final placeName = response['placeName$i'];
-  //       final placeLocation = response['placeLocation$i'];
-  //       final placeDescription = response['placeDescription$i'];
-  //       final List<String> outfitUrls = [];
-  //
-  //       for (var j = 0; j < 5; j++) {
-  //         final outfitUrl = response['outfitUrls$i$j'];
-  //         outfitUrls.add(outfitUrl);
-  //       }
-  //
-  //       final recommendationSet = {
-  //         'placeName': placeName,
-  //         'placeLocation': placeLocation,
-  //         'placeDescription': placeDescription,
-  //         'outfitUrls': outfitUrls,
-  //       };
-  //
-  //       recommendationSets.add(recommendationSet);
-  //     }
-  //
-  //     placeClothesRecommendModel.setRecommendationSets(recommendationSets);
-  //   } catch (error) {
-  //     // Handle error here
-  //     print('Failed to fetch recommendations: $error');
-  //   }
-  // }
-
   Future<void> fetchRecommendations(String emotion, String id, PlaceClothesRecommendModel placeClothesRecommendModel) async {
-    //테스트용 코드임. 실제로는 위에 주석친거로 받아와야함.
     try {
-      // final response = await sendHopeEmotionToServer(emotion, id);
+      var response = await sendHopeEmotionToServer(emotion, id);
       List<Map<String, dynamic>> recommendationSets = [];
 
       for (var i = 0; i < 3; i++) {
-        var placeName = '세종대학교'; // Set constant place name "A"
-        var placeLocation = '서울특별시 광진구 능동로'; // Set constant place location "B"
-        var placeDescription = '서울시 광진구의 세종대학교이다.'; // Set constant place description "C"
-        List<String> outfitUrls = List.generate(5, (j) => 'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg');
+        var placeName = response['placeName$i'];
+        var placeLocation = response['placeLocation$i'];
+        var placeDescription = response['placeDescription$i'];
+        List<String> outfitUrls = [];
+
+        for (var j = 0; j < 5; j++) {
+          var outfitUrl = response['outfitUrls$i$j'];
+          outfitUrls.add(outfitUrl);
+        }
 
         var recommendationSet = {
           'placeName': placeName,
@@ -160,22 +131,17 @@ class Next_Button extends StatelessWidget {
 
       placeClothesRecommendModel.setRecommendationSets(recommendationSets);
     } catch (error) {
-      // Handle error here
       print('Failed to fetch recommendations: $error');
     }
   }
-
 }
+
 //<Map<String, dynamic>> :  반환형은 Map이며, key는 String 타입, value는 아무 타입이나 올 수 있다.
 Future <Map<String, dynamic>> sendHopeEmotionToServer(String he, String id) async {
   var url = Uri.parse('http://34.66.37.198/emotext');
-  var data = {'text': he, 'ID': id};
+  var data = {'Text': he, 'Id': id};
   var body = json.encode(data);
-  var response = await http.post(
-    url,
-    headers: {"Content-Type": "application/json"},
-    body: body, //이 body에 placename,location,discription,clotheslist가 다 담겨져 있어야함.
-  );
+  var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
 
   if (response.statusCode == 200) {
     return json.decode(response.body);

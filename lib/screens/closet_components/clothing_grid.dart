@@ -6,7 +6,7 @@ import 'package:untitled/models/model_clothing_item.dart';
 import 'package:http/http.dart' as http;
 
 class ClothingGrid extends StatefulWidget {
-  final List<ClothingItem> clothingItems;
+  List<ClothingItem> clothingItems;
 
   ClothingGrid({required this.clothingItems});
 
@@ -21,14 +21,14 @@ class _ClothingGridState extends State<ClothingGrid> {
       child: GridView.count(
         crossAxisCount: 2,
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(), // GridView의 스크롤 비활성화
+        physics: NeverScrollableScrollPhysics(),
         children: List.generate(widget.clothingItems.length, (index) {
           return GestureDetector(
             onTap: () {
               _showDetailDialog(context, widget.clothingItems[index]);
             },
             child: Padding(
-              padding: EdgeInsets.all(8.0), // 각 이미지에 간격 추가
+              padding: EdgeInsets.all(8.0),
               child: Image.network(
                 widget.clothingItems[index].imageUrl,
                 fit: BoxFit.cover,
@@ -101,11 +101,12 @@ class _ClothingGridState extends State<ClothingGrid> {
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
-    var url = Uri.parse('http://34.66.37.198/deleteimg');
-    var data = {'url': url, 'ID': id};
+
+    var url = Uri.parse('http://34.66.37.198/deleteimage');
+    var data = {'url': url, 'id': id};
     var body = json.encode(data);
-    var response = await http.post(url, headers: {"Content-Type": "application/json"},
-        body: body);
+    var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
+
     if(response.statusCode == 200) {
       return ;
     }else{

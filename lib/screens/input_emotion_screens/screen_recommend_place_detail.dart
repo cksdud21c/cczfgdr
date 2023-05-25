@@ -4,11 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/models/model_input_emotion.dart';
 import 'package:untitled/screens/shared_screens/bottombar.dart';
 
 import '../../models/model_place_clothes_recommend.dart';
-import '../../models/model_register.dart';
 
 class RecommendPlaceDetail extends StatelessWidget {
   final int index;
@@ -24,11 +22,7 @@ class RecommendPlaceDetail extends StatelessWidget {
       'outfitUrls': outfitUrls,
     };
     var body = json.encode(data);
-    var response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
+    var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body,);
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
@@ -39,16 +33,19 @@ class RecommendPlaceDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final placeClothesRecommendModel = Provider.of<PlaceClothesRecommendModel>(context);
-    final recommendationSets = placeClothesRecommendModel.recommendationSets;
-    final placeName = recommendationSets[index]['placeName'];
-    final placeLocation = recommendationSets[index]['placeLocation'];
-    final placeDescription = recommendationSets[index]['placeDescription'];
-    final outfitUrls = recommendationSets[index]['outfitUrls'];
-    final descriptions = ['Outer', 'Top', 'Bottom', 'Shoes', 'Acc'];
+    var placeClothesRecommendModel = Provider.of<PlaceClothesRecommendModel>(context);
+    var recommendationSets = placeClothesRecommendModel.recommendationSets;
+
+    var placeName = recommendationSets[index]['placeName'];
+    var placeLocation = recommendationSets[index]['placeLocation'];
+    var placeDescription = recommendationSets[index]['placeDescription'];
+    var outfitUrls = recommendationSets[index]['outfitUrls'];
+    var descriptions = ['Outer', 'Top', 'Bottom', 'Shoes', 'Acc'];
+
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 6, 67, 117),

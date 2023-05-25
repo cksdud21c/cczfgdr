@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class CategoryBar extends StatefulWidget {
-  final Function(String) onCategorySelected;
+  Function(String) onCategorySelected;
 
   CategoryBar({required this.onCategorySelected});
 
@@ -19,6 +19,7 @@ class _CategoryBarState extends State<CategoryBar> {
       height: 50,
       child: ListView(
         scrollDirection: Axis.horizontal,
+        //카테고리바는 수평방향 scroll
         children: [
           _buildCategoryOption('All'),
           _buildCategoryOption('Outer'),
@@ -33,8 +34,7 @@ class _CategoryBarState extends State<CategoryBar> {
   }
 
   Widget _buildCategoryOption(String categoryName) {
-    final bool isSelected = categoryName == _selectedCategory;
-
+    bool isSelected = categoryName == _selectedCategory;
     return GestureDetector(
       onTap: () {
         setState(() {

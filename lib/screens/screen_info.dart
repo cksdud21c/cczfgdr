@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 class InfoScreen extends StatefulWidget {
   @override
   _InfoScreenState createState() => _InfoScreenState();
@@ -19,54 +18,39 @@ class _InfoScreenState extends State<InfoScreen> {
 
   void fetchUserData() async {
     try {
-      // Make an HTTP request to fetch the user data from the server
-      final response = await http.get(Uri.parse('http://your-api-url/user-data'));
-
+      var response = await http.get(Uri.parse('http://your-api-url/user-data'));
       if (response.statusCode == 200) {
-        // Parsing the response data and update the state
-        final data = json.decode(response.body);
+        var data = json.decode(response.body);
         setState(() {
           old = data['old'];
           sex = data['sex'];
         });
       } else {
-        // Handle error response
         print('Failed to fetch user data: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle network or server error
       print('Failed to fetch user data: $e');
     }
   }
 
   void saveUserData() async {
     try {
-      // Construct the request body with the updated values
-      final data = {'old': old, 'sex': sex};
-      final body = json.encode(data);
-      final url = Uri.parse('http://your-api-url/save-user-data');
-      // Make an HTTP post request to save the user data on the server
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: body,
-      );
+      var url = Uri.parse('http://your-api-url/save-user-data');
+      var data = {'old': old, 'sex': sex};
+      var body = json.encode(data);
+      var response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: body);
 
       if (response.statusCode == 200) {
-        // Show a SnackBar with the "저장!" message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('저장!'),
           ),
         );
-        // Close the page
         Navigator.pop(context);
       } else {
-        // Handle error response
         print('Failed to save user data: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle network or server error
       print('Failed to save user data: $e');
     }
   }

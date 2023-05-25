@@ -5,18 +5,17 @@ import 'package:untitled/models/model_input_place.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled/screens/shared_screens/bottombar.dart';
 import 'package:untitled/screens/shared_screens/menu.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import '../../models/model_ClothesRecommend.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class InputPlacePage extends StatelessWidget {
-  const InputPlacePage({
+  InputPlacePage({
     super.key,
     required this.title,
   });
 
-  final String title;
+  String title;
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +51,12 @@ class InputPlacePage extends StatelessWidget {
 }
 
 class InputPlace extends StatelessWidget {
-  final _controller = TextEditingController();
+  var _controller = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final hplace = Provider.of<InputPlaceModel>(context, listen: false);
+    var hplace = Provider.of<InputPlaceModel>(context, listen: false);
     return Container(
       padding: EdgeInsets.all(10),
       child: GestureDetector(
@@ -125,27 +124,23 @@ class Next_Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hplace = Provider.of<InputPlaceModel>(context, listen: false);
-    final clothesRecommendModel = Provider.of<ClothesRecommendModel>(context, listen: false);
+    var hplace = Provider.of<InputPlaceModel>(context, listen: false);
+    var clothesRecommendModel = Provider.of<ClothesRecommendModel>(context, listen: false);
+
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
+
     return TextButton(
       onPressed: () async {
         if (hplace.place.isNotEmpty) {
-          print(hplace.place);
-          print(hplace.district);
-          print(hplace.category);
-
           List<List<String>> recommendationSets = await sendPlaceNameValueToServer(
             id!,
             hplace.place,
             hplace.district,
             hplace.category,
           );
-
           clothesRecommendModel.setRecommendationSets(recommendationSets);
-
           Navigator.of(context).pushNamed('/screen_recommend_clothes');
         }
       },
@@ -154,60 +149,22 @@ class Next_Button extends StatelessWidget {
   }
 }
 
-
-// // 텍스트 값을 Flask 서버에 보내는 함수(보내지는거 확인완료.근데 애뮬레이터에서 한글이 안쳐짐. 이건 해결해야함.)
-// Future<List<List<String>>> sendPlaceNameValueToServer(String id, String pn, String d, String c) async {
-//   var url = Uri.parse('http://34.66.37.198/spacename');
-//   var data = {'ID' : id, 'place': pn, 'district': d, 'Category': c};
-//   var body = json.encode(data);
-//   var response = await http.post(
-//     url,
-//     headers: {"Content-Type": "application/json"},
-//     body: body,
-//   );
-//
-//   if (response.statusCode == 200) {
-//     List<dynamic> responseData = json.decode(response.body);
-//
-//     List<List<String>> recommendationSets = [];
-//     for (dynamic set in responseData) {
-//       List<String> urls = List<String>.from(set);
-//       recommendationSets.add(urls);
-//     }
-//
-//     return recommendationSets;
-//   } else {
-//     throw Exception('Failed to send place name to server');
-//   }
-// }
 Future<List<List<String>>> sendPlaceNameValueToServer(String id, String pn, String d, String c) async {
-  // Simulating response from the server with hardcoded image URLs
-  List<List<String>> recommendationSets = [
-    [
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-    ],
-    [
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-    ],
-    [
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-      'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-    ],
-  ];
+  var url = Uri.parse('http://34.66.37.198/spacename');
+  var data = {'ID' : id, 'place': pn, 'district': d, 'Category': c};
+  var body = json.encode(data);
+  var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
 
-  // Simulating an asynchronous delay to mimic server response time
-  await Future.delayed(Duration(seconds: 2));
-
-  return recommendationSets;
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<List<String>> recommendationSets = [];
+    for (dynamic set in responseData) {
+      List<String> urls = List<String>.from(set);
+      recommendationSets.add(urls);
+    }
+    return recommendationSets;
+  } else {
+    throw Exception('Failed to send place name to server');
+  }
 }
+

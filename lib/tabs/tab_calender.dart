@@ -35,30 +35,18 @@ class _TabCalenderState extends State<TabCalender> {
       this.focusedDay = focusedDay;
     });
 
-    // Request the selected date to the server
-    // String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDay);
-    // var url = Uri.parse('http://34.66.37.198/getData');
-    // var data = {'ID': id, 'date': formattedDate};
-    // var body = json.encode(data);
-    // var response = await http.post(url,headers: {"Content-Type": "application/json"},body: body,);
-    // 저 if문에는 if(response.statusCode == 200) 이거 들어가야함.
-    var a = 1;
-    if (a == 1) {
-      // Parse the response JSON to extract the desired data
-      // var responseData = json.decode(response.body);
-      // String emotion = responseData['emotion'];
-      // String placeName = responseData['placeName'];
-      // List<String> outfitUrls = List<String>.from(responseData['outfitUrls']);
-      String emotion = 'abcd';
-      String placeName = 'efg';
-      List<String> outfitUrls = [
-        'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-        'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-        'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-        'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg',
-        'https://i.ytimg.com/vi/905ABIKU6Hs/maxresdefault.jpg'
-      ];
-      // Organize dialog contents into widgets
+    String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDay);
+    var url = Uri.parse('http://34.66.37.198/getData');
+    var data = {'ID': id, 'date': formattedDate};
+    var body = json.encode(data);
+    var response = await http.post(url,headers: {"Content-Type": "application/json"},body: body);
+
+    if(response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      String emotion = responseData['emotion'];
+      String placeName = responseData['placeName'];
+      List<String> outfitUrls = List<String>.from(responseData['outfitUrls']);
+
       Widget emotionBox = Text('Emotion: $emotion');
       Widget placeBox = Text('Place Name: $placeName');
       Widget viewOutfitButton = ElevatedButton(
@@ -73,7 +61,6 @@ class _TabCalenderState extends State<TabCalender> {
         child: Text('View Outfit'),
       );
 
-      // Display dialog including received data
       showDialog(
         context: context,
         builder: (BuildContext context) {

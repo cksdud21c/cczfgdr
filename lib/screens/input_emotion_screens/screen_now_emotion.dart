@@ -145,10 +145,10 @@ class Now_emotion_Page extends StatelessWidget {
 // 텍스트 값을 Flask 서버에 보내는 함수(보내지는거 확인완료.근데 애뮬레이터에서 한글이 안쳐짐. 이건 해결해야함.)
 Future<void> sendNowEmotionToServer(String ne, String id) async {
   var url = Uri.parse('http://34.66.37.198:5000/emobutton');
-  var data = {'now_emotion': ne, 'ID': id};
+  var data = {'NowEmotion': ne, 'Id': id};
   var body = json.encode(data);
-  var response = await http.post(url, headers: {"Content-Type": "application/json"},
-      body: body);
+  var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
+
   if(response.statusCode == 200) {
     return;
   }else{

@@ -152,10 +152,9 @@ class RegisterButton extends StatelessWidget {
 
 Future<void> sendLoginInfoToServer(String id) async {
   var url = Uri.parse('http://34.66.37.198/login');
-  var data = {'ID': id};
+  var data = {'Id': id};
   var body = json.encode(data);
-  var response = await http.post(url, headers: {"Content-Type": "application/json"},
-      body: body);
+  var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
   if(response.statusCode == 200) {
     return ;
   }else{

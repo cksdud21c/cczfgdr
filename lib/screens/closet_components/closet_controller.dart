@@ -20,6 +20,7 @@ class ClosetController {
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
+
     List<String> itemUrls = await _flaskClient.getClothingItems(category,id!);
     return itemUrls.map((url) {
       return ClothingItem(

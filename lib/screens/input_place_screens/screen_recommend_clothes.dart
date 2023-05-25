@@ -9,10 +9,11 @@ import 'package:http/http.dart' as http;
 class Recommend_Clothes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final clothesRecommendModel = Provider.of<ClothesRecommendModel>(context, listen: false);
+    var clothesRecommendModel = Provider.of<ClothesRecommendModel>(context, listen: false);
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 6, 67, 117),
@@ -170,13 +171,9 @@ class Recommend_Clothes extends StatelessWidget {
 
   Future<void> saveOutfit(BuildContext context, String id, List<String> recommendationSet) async {
     var url = Uri.parse('http://34.66.37.198/?????');
-    var data = {'ID': id, 'outfitUrls': recommendationSet};
+    var data = {'OutfitUrls': recommendationSet, 'Id': id};
     var body = json.encode(data);
-    var response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
+    var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -186,8 +183,7 @@ class Recommend_Clothes extends StatelessWidget {
       );
       // Navigate to the home screen
       Navigator.pushNamed(context, '/home');
-      return json.decode(response.body);
-
+      return ;
     } else {
       throw Exception('Failed to send data value to the server');
     }

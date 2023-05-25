@@ -16,7 +16,6 @@ class CameraExample extends StatefulWidget {
 }
 
 class _CameraExampleState extends State<CameraExample> {
-
   File? _image;
   ImagePicker picker = ImagePicker();
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
@@ -30,21 +29,21 @@ class _CameraExampleState extends State<CameraExample> {
   Future<Map<String, dynamic>> sendPictureToServer(String id) async {
     File imageFile = File(_image!.path);
     List<int> imageBytes = imageFile.readAsBytesSync();
-    String base64Image = base64Encode(imageBytes);
-    Uri url = Uri.parse('http://34.66.37.198:5000/imgprocess');
+    String image = base64Encode(imageBytes);
 
-    http.Response response = await http.post(
-      url,
+    var url = Uri.parse('http://34.66.37.198:5000/imgprocess');
+    var data =  {'image': image, 'ID': id};
+    var body = json.encode(data);
+
+    var response = await http.post(url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode([
-        {'image': '$base64Image', 'ID': id}
-      ]),
+      body: body
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      Map<String, dynamic> responseData = jsonDecode(response.body);
       String imageUrl = responseData['imageUrl'];
       String category = responseData['category'];
       return {'imageUrl': imageUrl, 'category': category};
@@ -56,6 +55,7 @@ class _CameraExampleState extends State<CameraExample> {
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     var id  =user!.email;
+
     showDialog(
       context: context,
       builder: (context) {
@@ -115,24 +115,16 @@ class _CameraExampleState extends State<CameraExample> {
               TextButton(
                 child: Text('Cancel'),
                 onPressed: () {
-                  await sendCancelSignToServer(id!,imageUrl);
+                  sendCancelSignToServer(id!,imageUrl);
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
                 child: Text('OK'),
-                onPressed: () async {
-                  String OKsign = await sendOkSignToServer(id!,selectedCategory, imageUrl);
-                  if (OKsign == "OK") {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/closet');
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Communication error: Please close the app and restart it.'),
-                      ),
-                    );
-                  }
+                onPressed: () {
+                  sendOkSignToServer(id!,selectedCategory, imageUrl);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed('/closet');
                 },
               ),
             ],
@@ -164,143 +156,137 @@ class _CameraExampleState extends State<CameraExample> {
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 6, 67, 117),
-          title: Text('옷 촬영'),
-        ),
-        backgroundColor: const Color(0xfff4f3f9),
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 25.0),
-        showImage(),
-        SizedBox(
-          height: 50.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            // 카메라 촬영 버튼
-            FloatingActionButton(
-              child: Icon(Icons.add_a_photo),
-              tooltip: 'Pick Image',
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('TIP'),
-                      content: Text('Please make the whole picture of the clothes come out :)'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            getImage(ImageSource.camera);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            // 갤러리에서 이미지를 가져오는 버튼
-            FloatingActionButton(
-              child: Icon(Icons.wallpaper),
-              tooltip: 'pick Image',
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('TIP'),
-                      content: Text('Please make the whole picture of the clothes come out :)'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            getImage(ImageSource.gallery);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            FloatingActionButton(
-              child: Icon(Icons.navigate_next),//다음버튼
-              onPressed: () async {
-                if (_image == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('No image')),
-                  );
-                } else {//이미지가 비어있지 않으면
-                  // Display a progress indicator indicating that it is being analyzed
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 6, 67, 117),
+        title: Text('옷 촬영'),
+      ),
+      backgroundColor: const Color(0xfff4f3f9),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 25.0),
+          showImage(),
+          SizedBox(
+            height: 50.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              // 카메라 촬영 버튼
+              FloatingActionButton(
+                child: Icon(Icons.add_a_photo),
+                tooltip: 'Pick Image',
+                onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (context) {
+                    builder: (BuildContext context) {
                       return AlertDialog(
-                        content: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            CircularProgressIndicator(),
-                            SizedBox(width: 16),
-                            Text('analyzing image...'),
-                          ],
-                        ),
+                        title: Text('TIP'),
+                        content: Text('Please make the whole picture of the clothes come out :)'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              getImage(ImageSource.camera);
+                            },
+                          ),
+                        ],
                       );
                     },
                   );
+                },
+              ),
+              // 갤러리에서 이미지를 가져오는 버튼
+              FloatingActionButton(
+                child: Icon(Icons.wallpaper),
+                tooltip: 'pick Image',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('TIP'),
+                        content: Text('Please make the whole picture of the clothes come out :)'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              getImage(ImageSource.gallery);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              FloatingActionButton(
+                child: Icon(Icons.navigate_next),//다음버튼
+                onPressed: () async {
+                  if (_image == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No image')),
+                    );
+                  } else {//이미지가 비어있지 않으면
+                    // Display a progress indicator indicating that it is being analyzed
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              CircularProgressIndicator(),
+                              SizedBox(width: 16),
+                              Text('analyzing image...'),
+                            ],
+                          ),
+                        );
+                      },
+                    );
 
-                  Map<String, dynamic> result = await sendPictureToServer(id!);
-                  Navigator.of(context).pop();//이미지처리가 완료되면 로딩팝업 닫기.
+                    Map<String, dynamic> result = await sendPictureToServer(id!);
+                    Navigator.of(context).pop();//이미지처리가 완료되면 로딩팝업 닫기.
 
-                  String imageUrl = result['imageUrl'];
-                  String category = result['category']; //여기까지 완료
-                  // Close the progress indicator
-                  showImageDialog(imageUrl, category);
-                }
-              },
-            ),
+                    String imageUrl = result['imageUrl'];
+                    String category = result['category']; //여기까지 완료
+                    // Close the progress indicator
+                    showImageDialog(imageUrl, category);
+                  }
+                },
+              ),
 
 
 
-          ],
-        )
-      ],
+            ],
+          )
+        ],
       ),
     );
   }
 }
 
 // function to send image to Flask server
-Future<String> sendOkSignToServer(String id, String category, String url) async {
+Future<void> sendOkSignToServer(String id, String category, String url) async {
   var url = Uri.parse('http://34.66.37.198:5000/ok');
-  var data = {'ID': id, 'category': category, 'url': url};
+  var data = {'Id': id, 'Category': category, 'Url': url};
   var body = json.encode(data);
-  var response = await http.post(
-    url,
-    headers: {"Content-Type": "application/json"},
-    body: body,
-  );
+  var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
+
   if (response.statusCode == 200) {
-    return "OK";
+    return ;
   } else {
-    return "Fail";
+    throw Exception("Fail to send ok sign to server");;
   }
 }
 Future<void> sendCancelSignToServer(String id,String url) async {
   var url = Uri.parse('http://34.66.37.198:5000/???');
-  var data = {'ID': id, 'url': url};
+  var data = {'Id': id, 'Url': url};
   var body = json.encode(data);
-  var response = await http.post(
-    url,
-    headers: {"Content-Type": "application/json"},
-    body: body,
-  );
+  var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: body);
+
   if (response.statusCode == 200) {
     return ;
   } else {
